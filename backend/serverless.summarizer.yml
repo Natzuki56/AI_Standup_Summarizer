@@ -1,0 +1,28 @@
+
+service: ai-standup-summarizer
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  httpApi:
+    cors: true
+  environment:
+    GEMINI_API_KEY: ${env:GEMINI_API_KEY, 'your-gemini-api-key-here'}
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: ${env:SUMMARIZER_PORT, '3002'}
+    lambdaPort: 9002
+
+functions:
+  summarize:
+    handler: dist/handlers/summarizer.http
+    events:
+      - httpApi:
+          path: /summarize
+          method: POST
