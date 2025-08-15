@@ -33,10 +33,22 @@ const NewUpdateForm: React.FC<NewUpdateFormProps> = ({
       <h3 style={{ 
         margin: '0 0 16px 0', 
         color: '#2c3e50',
-        fontSize: '1.25rem'
+        fontSize: '1.25rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
       }}>
-        New Update
+        📝 Standup Update
       </h3>
+      
+      <p style={{
+        margin: '0 0 16px 0',
+        color: '#6b7280',
+        fontSize: '14px',
+        lineHeight: '1.5'
+      }}>
+        Submit your daily standup update. The system will automatically generate an AI-powered summary.
+      </p>
       
       <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
         <input
@@ -66,11 +78,12 @@ const NewUpdateForm: React.FC<NewUpdateFormProps> = ({
           fontSize: '14px',
           fontFamily: 'inherit',
           resize: 'vertical',
-          minHeight: '120px'
+          minHeight: '120px',
+          marginBottom: 16
         }}
       />
       
-      <div style={{ marginTop: 16, display: 'flex', gap: 12 }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
         <button 
           onClick={onSubmit} 
           disabled={loading}
@@ -83,10 +96,13 @@ const NewUpdateForm: React.FC<NewUpdateFormProps> = ({
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: '14px',
             fontWeight: '500',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
           }}
         >
-          {loading ? 'Submitting...' : 'Submit'}
+          {loading ? '⏳ Submitting...' : '📤 Submit Update'}
         </button>
         
         <button 
@@ -101,10 +117,13 @@ const NewUpdateForm: React.FC<NewUpdateFormProps> = ({
             cursor: loading ? 'not-allowed' : 'pointer',
             fontSize: '14px',
             fontWeight: '500',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
           }}
         >
-          Refresh
+          🔄 Refresh
         </button>
       </div>
       

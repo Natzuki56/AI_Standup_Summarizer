@@ -9,6 +9,7 @@ provider:
     cors: true
   environment:
     GEMINI_API_KEY: ${env:GEMINI_API_KEY, 'your-gemini-api-key-here'}
+    GRPC_PORT: ${env:GRPC_PORT, '50051'}
 
 plugins:
   - serverless-dotenv-plugin
@@ -25,4 +26,11 @@ functions:
     events:
       - httpApi:
           path: /summarize
+          method: POST
+  
+  heavy-payload:
+    handler: dist/handlers/summarizer.http
+    events:
+      - httpApi:
+          path: /heavy-payload
           method: POST

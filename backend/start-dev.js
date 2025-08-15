@@ -31,12 +31,32 @@ function loadEnv() {
 }
 
 // Start a service
-function startService(name, config, port) {
+function startService(name, config, port, extraEnv = {}) {
   console.log(`Starting ${name} service on port ${port}...`);
   
   const child = spawn('npx', ['serverless', 'offline', '--config', config], {
     stdio: 'inherit',
-    env: { ...process.env, [name + '_PORT']: port.toString() }
+    env: { ...process.env, [name + '_PORT']: port.toString(), ...extraEnv }
+  });
+  
+  child.on('error', (error) => {
+    console.error(`Error starting ${name} service:`, error);
+  });
+  
+  child.on('exit', (code) => {
+    console.log(`${name} service exited with code ${code}`);
+  });
+  
+  return child;
+}
+
+// Start a standalone service (like gRPC)
+function startStandaloneService(name, script, port, extraEnv = {}) {
+  console.log(`Starting ${name} service on port ${port}...`);
+  
+  const child = spawn('node', [script], {
+    stdio: 'inherit',
+    env: { ...process.env, [name + '_PORT']: port.toString(), ...extraEnv }
   });
   
   child.on('error', (error) => {
@@ -58,17 +78,22 @@ async function main() {
   const apiPort = env.API_PORT || '3001';
   const summarizerPort = env.SUMMARIZER_PORT || '3002';
   const notifierPort = env.NOTIFIER_PORT || '3003';
+  const grpcPort = env.GRPC_PORT || '50051';
   
   console.log('Starting services with environment variables:');
   console.log(`API_PORT: ${apiPort}`);
   console.log(`SUMMARIZER_PORT: ${summarizerPort}`);
   console.log(`NOTIFIER_PORT: ${notifierPort}`);
+  console.log(`GRPC_PORT: ${grpcPort}`);
   console.log('');
   
   // Start all services
   const api = startService('API', 'serverless.api.yml', apiPort);
   const summarizer = startService('SUMMARIZER', 'serverless.summarizer.yml', summarizerPort);
   const notifier = startService('NOTIFIER', 'serverless.notifier.yml', notifierPort);
+  const grpc = startStandaloneService('GRPC', 'dist/grpc-server.js', grpcPort, {
+    GEMINI_API_KEY: env.GEMINI_API_KEY
+  });
   
   // Handle process termination
   process.on('SIGINT', () => {
@@ -76,14 +101,16 @@ async function main() {
     api.kill('SIGINT');
     summarizer.kill('SIGINT');
     notifier.kill('SIGINT');
+    grpc.kill('SIGINT');
     process.exit(0);
   });
   
   process.on('SIGTERM', () => {
     console.log('\nShutting down services...');
     api.kill('SIGTERM');
-    summarizer.kill('SIGTERM');
     notifier.kill('SIGTERM');
+    summarizer.kill('SIGTERM');
+    grpc.kill('SIGTERM');
     process.exit(0);
   });
 }

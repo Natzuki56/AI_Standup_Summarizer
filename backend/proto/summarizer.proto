@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package summarizer;
+
+service SummarizerService {
+  rpc Summarize (SummarizeRequest) returns (SummarizeResponse);
+  rpc Ping (PingRequest) returns (PingResponse);
+  rpc HeavyPayload (HeavyPayloadRequest) returns (HeavyPayloadResponse);
+}
+
+message SummarizeRequest {
+  string text = 1;
+}
+
+message SummarizeResponse {
+  string summary = 1;
+  string error = 2;
+}
+
+message PingRequest {
+  string message = 1;
+}
+
+message PingResponse {
+  string message = 1;
+  string timestamp = 2;
+}
+
+message HeavyPayloadRequest {
+  string message = 1;
+  int32 size_kb = 2;
+}
+
+message HeavyPayloadResponse {
+  string message = 1;
+  string timestamp = 2;
+  repeated User users = 3;
+  repeated Transaction transactions = 4;
+  repeated LogEntry logs = 5;
+  int32 actual_size_bytes = 6;
+  int32 processing_time_ms = 7;
+  int32 generated_size_kb = 8;
+}
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  UserProfile profile = 4;
+  UserActivity activity = 5;
+}
+
+message UserProfile {
+  int32 age = 1;
+  string location = 2;
+  UserPreferences preferences = 3;
+  UserSettings settings = 4;
+}
+
+message UserPreferences {
+  string theme = 1;
+  string language = 2;
+  bool notifications = 3;
+}
+
+message UserSettings {
+  int32 privacy_level = 1;
+  bool auto_save = 2;
+  int32 sync_frequency = 3;
+}
+
+message UserActivity {
+  string last_login = 1;
+  int32 login_count = 2;
+  string status = 3;
+}
+
+message Transaction {
+  string id = 1;
+  string user_id = 2;
+  string amount = 3;
+  string currency = 4;
+  string status = 5;
+  string timestamp = 6;
+  TransactionDetails details = 7;
+}
+
+message TransactionDetails {
+  string category = 1;
+  string merchant = 2;
+  string location = 3;
+  repeated string tags = 4;
+}
+
+message LogEntry {
+  string id = 1;
+  string level = 2;
+  string message = 3;
+  string timestamp = 4;
+  string source = 5;
+  string user_id = 6;
+  LogContext context = 7;
+}
+
+message LogContext {
+  string request_id = 1;
+  string session_id = 2;
+  string ip_address = 3;
+  string user_agent = 4;
+  AdditionalData additional_data = 5;
+}
+
+message AdditionalData {
+  string param1 = 1;
+  bool param2 = 2;
+  double param3 = 3;
+}

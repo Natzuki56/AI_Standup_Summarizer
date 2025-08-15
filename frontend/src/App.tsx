@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { Header, Layout, NewUpdateForm, SummariesList } from './components'
+import { Header, Layout, NewUpdateForm, SummariesList, PerformanceTester } from './components'
 import { useStandupApi } from './hooks/useStandupApi'
 
 const App: React.FC = () => {
@@ -10,15 +10,30 @@ const App: React.FC = () => {
     summaries,
     loading,
     error,
+    protocol,
+    performanceMetrics,
     setUserId,
     setText,
+    setProtocol,
     createUpdate,
-    fetchSummaries
+    fetchSummaries,
+    testPerformance,
+    testHeavyPayload
   } = useStandupApi()
 
   return (
     <Layout>
-      <Header title="AI Standup Summarizer (Local)" />
+      <Header title="AI Standup Summarizer - HTTP vs gRPC Performance" />
+      
+      <PerformanceTester
+        protocol={protocol}
+        loading={loading}
+        error={error}
+        performanceMetrics={performanceMetrics}
+        onProtocolChange={setProtocol}
+        onPerformanceTest={testPerformance}
+        onHeavyPayloadTest={testHeavyPayload}
+      />
       
       <NewUpdateForm
         userId={userId}
